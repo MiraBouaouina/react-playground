@@ -1,3 +1,10 @@
 .App {
   text-align: center;
 }
+.list{
+  display:flex;
+  margin:auto;
+}
+.lists{
+  display: flex;
+}

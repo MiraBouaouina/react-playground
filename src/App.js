@@ -3,70 +3,139 @@ import './App.css'
 import Person from './Person/Person.js'
 class App extends Component {
   state = {
-    persons: [ //tableau des objets
-      { id: "aze", name: "Lina", age: "20" },
-      { id: "azr", name: "Amira", age: "21" },
-      { id: "abz", name: "Céline", age: "10" },
-      { id: "abc", name: "Mounir", age: "9" }
+    persons1: [ //tableau des objets
+      { id: "1", name: "Lina", age: "20" },
+      { id: "2", name: "Amira", age: "21" }
+    ],
+    persons2: [
+      { id: "3", name: "Céline", age: "10" },
+      { id: "4", name: "Mounir", age: "9" }
     ],
     showPersons: true
-  }
-
-  switchNameHandler = () => {
-    console.log("Button was clicked!!")
-    const newPersons = [...this.state.persons]// les ... pour copier les vals dans le nouv tab des obj
-    newPersons[0].name = "Nour"
-    this.setState(// key:value car c un objet
-      { persons: newPersons }
-    )
 
   }
+
   changeNameHandler = (event, person) => {
-    const newPersons = [...this.state.persons]
-    const index = newPersons.indexOf(person)
-    newPersons[index].name = event.target.value
-    this.setState({ //changer le contenu de persons
-      persons: newPersons
-    })
+    let newPersons = null
+    if (this.state.persons1.includes(person)) {
+      newPersons = [...this.state.persons1]
+      const index = newPersons.indexOf(person)
+      newPersons[index].name = event.target.value
+      this.setState({ //changer le contenu de persons
+        persons1: newPersons
+      })
+    }
+    else {
+      newPersons = [...this.state.persons2]
+      const index = newPersons.indexOf(person)
+      newPersons[index].name = event.target.value
+      this.setState({ //changer le contenu de persons
+        persons2: newPersons
+      })
 
+    }
   }
   showPersonsHandler = () => {
     this.setState({ showPersons: !this.state.showPersons })
-
   }
-  removePersonHandler = (person) => {
-    const newPersons = [...this.state.persons]
-    const index = newPersons.indexOf(person)
-    newPersons.splice(index, 1)
-    this.setState({ //changer le contenu de persons
-      persons: newPersons
-    })
 
+  movePersonHandler = (person) => {
+    if (this.state.persons1.includes(person)) {
+      let newPersons = [...this.state.persons1]
+      let newPersons2 = [...this.state.persons2, person]
+      const index = newPersons.indexOf(person)
+      newPersons.splice(index, 1)//supp un obj du tab
+
+      this.setState({ //changer le contenu de persons
+        persons1: newPersons,
+        persons2: newPersons2
+      })
+    } else {
+      let newPersons = [...this.state.persons1, person]
+      let newPersons2 = [...this.state.persons2]
+      const index = newPersons2.indexOf(person)
+      newPersons2.splice(index, 1)//supp un obj du tab
+
+      this.setState({ //changer le contenu de persons
+        persons1: newPersons,
+        persons2: newPersons2
+      })
+    }
+  }
+
+  removePersonHandler = (person) => {
+    let newPersons = null
+    if (this.state.persons1.includes(person)) {
+      newPersons = [...this.state.persons1]
+      const index = newPersons.indexOf(person)
+      newPersons.splice(index, 1)//supp un obj du tab
+      this.setState({ //changer le contenu de persons
+        persons1: newPersons
+      })
+    } else {
+      newPersons = [...this.state.persons2]
+      const index = newPersons.indexOf(person)
+      newPersons.splice(index, 1)//supp un obj du tab
+      this.setState({ //changer le contenu de persons
+        persons2: newPersons
+      })
+    }
   }
 
   render() {
-    let personsComponents = null
-    if (this.state.showPersons) {
-      personsComponents = (<div>
-        {this.state.persons.map((person) => {// map boucler sur une 'person'
-          return (
-            <Person
-              name={person.name}
-              age={person.age}
-              remove={() => { this.removePersonHandler(person) }}
-              changed={(event) => { this.changeNameHandler(event, person) }}
-              key={person.id} />
-          )
-        })}
-      </div>)
+    let personsComponents1 = null
+    let personsComponents2 = null
+    if (this.state.showPersons) {// init true
+      personsComponents1 = (
+        <div>
+          <h2>Liste A</h2>
+
+          {this.state.persons1.map((person) => {// map boucler sur une 'person'
+            return (//creation du Person
+              <Person //les attributs et fcts
+                name={person.name}
+                age={person.age}
+                remove={() => { this.removePersonHandler(person) }}//arrow fct
+                changed={(event) => { this.changeNameHandler(event, person) }}
+                key={person.id}
+                move={() => { this.movePersonHandler(person) }}
+              />
+            )
+          })}
+        </div>)
+      personsComponents2 = (
+        <div>
+          <h2>Liste B</h2>
+          {this.state.persons2.map((person) => {// map boucler sur une 'person'
+            return (//creation du Person
+              <Person //les attributs et fcts
+                name={person.name}
+                age={person.age}
+                remove={() => { this.removePersonHandler(person) }}//arrow fct
+                changed={(event) => { this.changeNameHandler(event, person) }}
+                key={person.id}
+                move={() => { this.movePersonHandler(person) }}
+              />
+            )
+          })}
+        </div>
+      )
+
     }
 
     return (
       <div className='App'>
-        <h1> Hello World !! </h1>
-        <button onClick={this.switchNameHandler} > Switch Name</button>
-        <button onClick={this.showPersonsHandler}> Toggel Persons</button>
-        {personsComponents}
+        <button onClick={this.showPersonsHandler}> Toggel Persons </button>
+        <button onClick={this.changeColorHandler}> Change color</button>
+
+        <div className='lists'>
+          <div className='list'>
+            {personsComponents1}
+          </div>
+          <div className='list'>
+            {personsComponents2}
+          </div>
+        </div>
 
       </div>
 
